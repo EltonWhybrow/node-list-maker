@@ -1,6 +1,9 @@
 const express = require('express');
+const { validationResult, body } = require('express-validator');
 const bodyParser = require('body-parser');
+
 const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -15,18 +18,35 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const formDataObject = {};
 
 // POST endpoint to handle form submissions
-app.post('/submit', (req, res) => {
-    const formData = req.body;
-    console.log('Received form data:', formData);
+app.post('/submit',
+    // middleware
+    [
+        // Use express-validator to define validation rules
+        body('field1').notEmpty().withMessage('Field 1 is required'),
+        body('field2').notEmpty().withMessage('Field 2 is required'),
+    ],
+    (req, res) => {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log('Validation errors:', errors.array());
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-    // Populate the object with form data
-    Object.assign(formDataObject, formData);
+        const formData = req.body;
+        console.log('Received form data:', formData);
 
-    // You can add more processing or validation here if needed
+        // Populate the object with form data
+        Object.assign(formDataObject, formData);
 
-    // Send a response
-    res.json({ message: 'Form submission successful!', data: formDataObject });
-});
+        // Send a response
+        res.json({ message: 'List data added!', data: formDataObject });
+
+        // Write the data to a JSON file
+        const jsonData = JSON.stringify(formDataObject, null, 2);
+        fs.writeFileSync('created_list.json', jsonData);
+
+    });
 
 // GET endpoint to retrieve the current state of the object
 app.get('/data', (req, res) => {

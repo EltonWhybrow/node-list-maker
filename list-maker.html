@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Submission</title>
+    <title>Create JSON List </title>
 </head>
 
 <body>
 
-    <h1>Submit Form</h1>
+    <h1>Create List</h1>
 
     <form id="myForm">
         <label for="field1">Field 1:</label>
-        <input type="text" id="field1" name="field1" required><br>
+        <input type="text" id="field1" name="field1"><br>
 
         <label for="field2">Field 2:</label>
-        <input type="text" id="field2" name="field2" required><br>
+        <input type="text" id="field2" name="field2"><br>
 
         <button type="submit">Submit</button>
     </form>
@@ -26,16 +26,16 @@
     <script>
         document.getElementById('myForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            console.log('>>>LOG>>>', document.getElementById('field1').value);
-            console.log('>>>LOG>>>', document.getElementById('field2').value);
-
-
+            // console.log('>>>LOG>>>', document.getElementById('field1').value);
+            // console.log('>>>LOG>>>', document.getElementById('field2').value);
 
             // Get form data
             const formData = {
                 field1: document.getElementById('field1').value,
                 field2: document.getElementById('field2').value
             };
+            console.log('>>>formData>>>', formData);
+
 
             // Send a POST request to the server
             fetch('http://localhost:3000/submit', {
@@ -45,14 +45,12 @@
                 },
                 body: JSON.stringify(formData)
             })
-                .then(response => response.json())
+                .then(response => response.json()
+                )
                 .then(data => {
-                    console.log('>>> data FvF>>>', data);
-
-                    console.log('Server response:', data);
-
                     // Convert the object to JSON and display it
-                    const jsonResponse = JSON.stringify(data.data, null, 2);
+                    const jsonResponse = JSON.stringify(data, null, 2);
+                    console.log('Server jsonResponse:', jsonResponse);
                     document.getElementById('response').textContent = jsonResponse;
                 })
                 .catch(error => {
