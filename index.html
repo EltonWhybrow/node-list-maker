@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+</head>
+
+<body>
+
+    <h1>Submit Form</h1>
+
+    <form id="myForm">
+        <label for="field1">Field 1:</label>
+        <input type="text" id="field1" name="field1" required><br>
+
+        <label for="field2">Field 2:</label>
+        <input type="text" id="field2" name="field2" required><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            console.log('>>>LOG>>>', document.getElementById('field1').value);
+            console.log('>>>LOG>>>', document.getElementById('field2').value);
+
+
+
+            // Get form data
+            const formData = {
+                field1: document.getElementById('field1').value,
+                field2: document.getElementById('field2').value
+            };
+
+            // Send a POST request to the server
+            fetch('http://localhost:3000/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('>>> data FvF>>>', data);
+
+                    console.log('Server response:', data);
+
+                    // Convert the object to JSON and display it
+                    const jsonResponse = JSON.stringify(data.data, null, 2);
+                    document.getElementById('response').textContent = jsonResponse;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+</body>
+
+</html>
